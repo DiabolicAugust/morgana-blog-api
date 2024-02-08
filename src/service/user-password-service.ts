@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { Strings } from '../data/strings.js';
 
 @Injectable()
 export class UserPasswordService {
@@ -7,5 +8,14 @@ export class UserPasswordService {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     return hashedPassword;
+  }
+
+  async validatePassword(userPassword: string, clientPassword: string) {
+    const isPasswordValid = await bcrypt.compare(clientPassword, userPassword);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException(Strings.wrongPassword);
+    }
+    return isPasswordValid;
   }
 }
