@@ -20,6 +20,7 @@ export class User {
 
   createdAt: Date;
   updatedAt: Date;
+  id: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

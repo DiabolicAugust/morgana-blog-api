@@ -4,9 +4,10 @@ import { User, UserDocument } from './models/user.model.js';
 import { Model, Types } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
+import { ReturnUserDto } from './dto/return-user.dto.js';
 import { NameEnum, Strings } from '../data/strings.js';
 import { errorHandlingService } from '../service/error-handling-service.js';
-import { idVerifyService } from '../service/id-verify-service.js';
+import { getReturnUser, idVerify } from '../service/functions.js';
 import { UserPasswordService } from '../service/user-password-service.js';
 
 @Injectable()
@@ -16,7 +17,7 @@ export class UserService {
     private readonly userPasswordService: UserPasswordService,
   ) {}
 
-  async createUser(dto: CreateUserDto): Promise<User> {
+  async createUser(dto: CreateUserDto): Promise<ReturnUserDto> {
     try {
       const user = await this.userModel.findOne({ email: dto.email });
       if (user) {
@@ -26,14 +27,16 @@ export class UserService {
         );
       }
       dto.password = await this.userPasswordService.hashPassword(dto.password);
-      return this.userModel.create(dto);
+      const newUser = await this.userModel.create(dto);
+
+      return getReturnUser(newUser);
     } catch (error) {
-      errorHandlingService(error);
+      throw errorHandlingService(error);
     }
   }
-  async deleteUser(id: string): Promise<User> {
+  async deleteUser(id: string): Promise<ReturnUserDto> {
     try {
-      idVerifyService(id);
+      idVerify(id);
       const user = await this.userModel.findByIdAndDelete(id);
       if (!user) {
         throw new HttpException(
@@ -41,14 +44,14 @@ export class UserService {
           HttpStatus.NOT_FOUND,
         );
       }
-      return user;
+      return getReturnUser(user);
     } catch (error) {
-      errorHandlingService(error);
+      throw errorHandlingService(error);
     }
   }
-  async updateUser(id: string, dto: UpdateUserDto): Promise<User> {
+  async updateUser(id: string, dto: UpdateUserDto): Promise<ReturnUserDto> {
     try {
-      idVerifyService(id);
+      idVerify(id);
       const user = await this.userModel.findByIdAndUpdate(id, dto, {
         new: true,
       });
@@ -58,15 +61,15 @@ export class UserService {
           HttpStatus.NOT_FOUND,
         );
       }
-      return user;
+      return getReturnUser(user);
     } catch (error) {
-      errorHandlingService(error);
+      throw errorHandlingService(error);
     }
   }
 
-  async getUserById(id: string): Promise<User> {
+  async getUserById(id: string): Promise<ReturnUserDto> {
     try {
-      idVerifyService(id);
+      idVerify(id);
 
       const user = await this.userModel.findById(id);
       if (!user) {
@@ -75,9 +78,27 @@ export class UserService {
           HttpStatus.NOT_FOUND,
         );
       }
-      return user;
+      return getReturnUser(user);
     } catch (error) {
-      errorHandlingService(error);
+      throw errorHandlingService(error);
+    }
+  }
+
+  async getLoginUser(email: string, password: string): Promise<ReturnUserDto> {
+    try {
+      const user = await this.userModel.findOne({ email: email });
+      if (!user) {
+        throw new HttpException(
+          Strings.notFoundByEmail(NameEnum.User) + email,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      await this.userPasswordService.validatePassword(user.password, password);
+
+      return getReturnUser(user);
+    } catch (error) {
+      throw errorHandlingService(error);
     }
   }
 }

@@ -7,26 +7,25 @@ import {
   Patch,
   Post,
   Req,
+  Request,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto.js';
 import { UserService } from './user.service.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
+import { AuthGuard } from '../auth/guards/auth.guard.js';
+import { PayloadDto } from '../data/dto/payload.dto.js';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('create')
-  @UsePipes(ValidationPipe)
-  async createUser(@Body() dto: CreateUserDto) {
-    return this.userService.createUser(dto);
-  }
-
+  @UseGuards(AuthGuard)
   @Delete('delete/:id')
   @UsePipes(ValidationPipe)
-  async deleteUser(@Param('id') id: string) {
+  async deleteUser(@Param('id') id: string, @Request() req: Request) {
+    console.log(req['token_info'] as PayloadDto);
     return this.userService.deleteUser(id);
   }
 
