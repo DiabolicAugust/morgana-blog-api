@@ -9,6 +9,7 @@ import { NameEnum, Strings } from '../data/strings.js';
 import { errorHandlingService } from '../service/error-handling-service.js';
 import { getReturnUser, idVerify } from '../service/functions.js';
 import { UserPasswordService } from '../service/user-password-service.js';
+import { Constants } from '../data/constants.js';
 
 @Injectable()
 export class UserService {
@@ -29,7 +30,8 @@ export class UserService {
       dto.password = await this.userPasswordService.hashPassword(dto.password);
       const newUser = await this.userModel.create(dto);
 
-      return getReturnUser(newUser);
+      const { password, ...userWithoutPassword } = newUser.toObject();
+      return userWithoutPassword;
     } catch (error) {
       throw errorHandlingService(error);
     }
@@ -37,14 +39,17 @@ export class UserService {
   async deleteUser(id: string): Promise<ReturnUserDto> {
     try {
       idVerify(id);
-      const user = await this.userModel.findByIdAndDelete(id);
+      const user = await this.userModel
+        .findByIdAndDelete(id)
+        .select(Constants.extractPassword)
+        .exec();
       if (!user) {
         throw new HttpException(
           Strings.notFoundById(NameEnum.User) + id,
           HttpStatus.NOT_FOUND,
         );
       }
-      return getReturnUser(user);
+      return user;
     } catch (error) {
       throw errorHandlingService(error);
     }
@@ -52,16 +57,19 @@ export class UserService {
   async updateUser(id: string, dto: UpdateUserDto): Promise<ReturnUserDto> {
     try {
       idVerify(id);
-      const user = await this.userModel.findByIdAndUpdate(id, dto, {
-        new: true,
-      });
+      const user = await this.userModel
+        .findByIdAndUpdate(id, dto, {
+          new: true,
+        })
+        .select(Constants.extractPassword)
+        .exec();
       if (!user) {
         throw new HttpException(
           Strings.notFoundById(NameEnum.User),
           HttpStatus.NOT_FOUND,
         );
       }
-      return getReturnUser(user);
+      return user;
     } catch (error) {
       throw errorHandlingService(error);
     }
@@ -71,14 +79,17 @@ export class UserService {
     try {
       idVerify(id);
 
-      const user = await this.userModel.findById(id);
+      const user = await this.userModel
+        .findById(id)
+        .select(Constants.extractPassword)
+        .exec();
       if (!user) {
         throw new HttpException(
           Strings.notFoundById(NameEnum.User) + id,
           HttpStatus.NOT_FOUND,
         );
       }
-      return getReturnUser(user);
+      return user;
     } catch (error) {
       throw errorHandlingService(error);
     }

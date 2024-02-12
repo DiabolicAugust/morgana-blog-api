@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import 'dotenv/config';
 import { JwtModule } from '@nestjs/jwt';
+import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
@@ -17,11 +18,12 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1h' }, //
+      signOptions: {}, //
     }),
     UserModule,
     MongooseModule.forRoot(process.env.MONGO_URL!),
     AuthModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [AppService],
