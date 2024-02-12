@@ -11,8 +11,9 @@ export class UserPasswordService {
   }
 
   async validatePassword(userPassword: string, clientPassword: string) {
+    console.log(clientPassword, userPassword);
     const isPasswordValid = await bcrypt.compare(clientPassword, userPassword);
-
+    console.log(isPasswordValid);
     if (!isPasswordValid) {
       throw new UnauthorizedException(Strings.wrongPassword);
     }

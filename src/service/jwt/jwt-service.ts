@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PayloadDto } from '../data/dto/payload.dto';
-import { ReturnUserDto } from '../user/dto/return-user.dto.js';
+import { PayloadDto } from './dto/payload.dto';
+import { ReturnUserDto } from '../../user/dto/return-user.dto.js';
 
 @Injectable()
 export class AuthJwtService {
@@ -15,6 +15,7 @@ export class AuthJwtService {
 
       return token;
     } catch (error) {
+      console.log(error);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -26,6 +27,7 @@ export class AuthJwtService {
       )) as PayloadDto;
       return decodedPayload;
     } catch (error) {
+      console.log(error);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }

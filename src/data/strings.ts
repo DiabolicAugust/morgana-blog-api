@@ -12,4 +12,7 @@ export const Strings = {
 
   //auth
   wrongPassword: 'Provided password is not correct for the user',
+
+  //posts
+  noPostByID: 'There is no post with this id',
 };
