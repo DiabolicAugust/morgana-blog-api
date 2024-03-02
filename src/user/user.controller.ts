@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
-import { AuthGuard } from '../auth/guards/auth.guard.js';
+import { AuthGuard } from '../guards/auth.guard.js';
 import { PayloadDto } from '../service/jwt/dto/payload.dto.js';
 
 @Controller('user')

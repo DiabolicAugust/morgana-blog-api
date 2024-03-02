@@ -14,7 +14,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto.js';
-import { AuthGuard } from '../auth/guards/auth.guard.js';
+import { AuthGuard } from '../guards/auth.guard.js';
 import { PostService } from './post.service.js';
 import { UpdatePostDto } from './dto/update-post.dto.js';
 import { PayloadDto } from '../service/jwt/dto/payload.dto.js';

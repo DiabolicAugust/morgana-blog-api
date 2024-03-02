@@ -11,7 +11,7 @@ import {
 import { AuthService } from './auth.service.js';
 import { LoginDto } from './dto/login.dto.js';
 import { CreateUserDto } from '../user/dto/create-user.dto.js';
-import { AuthGuard } from './guards/auth.guard.js';
+import { AuthGuard } from '../guards/auth.guard.js';
 
 @Controller('auth')
 export class AuthController {

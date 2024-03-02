@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import 'dotenv/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PostModule } from './post/post.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { PostModule } from './post/post.module';
     MongooseModule.forRoot(process.env.MONGO_URL!),
     AuthModule,
     PostModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

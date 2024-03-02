@@ -1,5 +1,13 @@
 export enum NameEnum {
   User = 'User',
+  Post = 'Post',
+  Comment = 'Comment',
+}
+
+export enum FieldEnum {
+  Description = 'Description',
+  Author = 'Author',
+  Post = 'Post',
 }
 
 export const Strings = {
@@ -15,4 +23,8 @@ export const Strings = {
 
   //posts
   noPostByID: 'There is no post with this id',
+
+  //validation
+  cantBeEmpty: (field: FieldEnum) => `${field} field can not be empty`,
+  mustBeString: (field: FieldEnum) => `${field} must be a string`,
 };
